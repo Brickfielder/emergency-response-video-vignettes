@@ -63,4 +63,14 @@ http://localhost:8000
 
 ## Licence
 
-No licence has been selected yet. Until a licence is added, reuse is not explicitly granted beyond normal GitHub viewing and collaboration.
+Code in this repository is licensed under the MIT License. See `LICENSE`.
+
+Non-code materials, including text, images, videos, documentation, and scenario content, are licensed under the Creative Commons Attribution 4.0 International License (CC BY 4.0). See `LICENSE-CONTENT`.
+
+Suggested attribution:
+
+```text
+Emergency Response Video Vignettes by Brickfielder.
+Source: https://github.com/Brickfielder/emergency-response-video-vignettes
+License: MIT for code; CC BY 4.0 for non-code materials.
+```
