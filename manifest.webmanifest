@@ -1,0 +1,25 @@
+{
+  "name": "Neurorehab Safety Vignettes",
+  "short_name": "Safety Vignettes",
+  "description": "Local clinician-led safety vignette observation aid for neurorehabilitation.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#eef5f7",
+  "theme_color": "#eef5f7",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "assets/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "assets/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

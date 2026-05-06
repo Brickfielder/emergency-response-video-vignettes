@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#f4f1ea" />
+  <meta name="description" content="Local clinician-led neurorehabilitation safety vignette observation aid." />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="icon" href="assets/icons/icon-192.png" />
+  <link rel="apple-touch-icon" href="assets/icons/icon-192.png" />
+  <link rel="stylesheet" href="styles.css?v=20260501a" />
+  <title>Safety Vignettes</title>
+</head>
+<body class="intro-active">
+  <header class="app-header">
+    <div>
+      <p class="eyebrow">Neurorehabilitation safety observation</p>
+      <h1>Safety Vignettes</h1>
+    </div>
+    <div class="header-actions">
+      <button class="ghost-button" id="installButton" type="button" hidden>Install</button>
+    </div>
+  </header>
+
+  <section class="intro-page" id="introPage" aria-labelledby="intro-title">
+    <div class="intro-surface">
+      <div class="intro-copy">
+        <p class="eyebrow">Before you begin</p>
+        <h2 id="intro-title">A clinician-led way to explore everyday safety judgement.</h2>
+        <p>
+          Use short video vignettes, supported visual choices, and structured notes to observe how
+          someone identifies risks, reasons about consequences, and chooses what to do next.
+        </p>
+        <p>
+          This app does not diagnose, score, pass, fail, or replace clinical judgement. Interpret
+          responses alongside functional observation, communication needs, cognition, fatigue,
+          collateral history, and MDT discussion.
+        </p>
+        <div class="intro-instructions">
+          <h3>Session flow</h3>
+          <ol>
+            <li>Choose a scenario and play the video, replaying or pausing if needed.</li>
+            <li>Ask open clinical questions before offering image choices.</li>
+            <li>Record prompts, selections, and context before exporting the summary.</li>
+          </ol>
+        </div>
+        <button id="startAppButton" type="button">Start assessment</button>
+      </div>
+      <div class="intro-preview" aria-hidden="true">
+        <img src="assets/choices/traffic/shout-to-child.png" alt="" />
+        <img src="assets/choices/pan-fire/move-away.png" alt="" />
+        <img src="assets/choices/unwell-person/check-response.png" alt="" />
+        <img src="assets/choices/possible-scam/ask-for-id.png" alt="" />
+      </div>
+    </div>
+  </section>
+
+  <main class="app-shell" id="appShell" hidden>
+    <section class="scenario-rail" aria-labelledby="scenario-heading">
+      <div class="rail-head">
+        <div>
+          <h2 id="scenario-heading">Scenarios</h2>
+          <p>Choose one vignette.</p>
+        </div>
+      </div>
+      <div id="scenarioList" class="scenario-list"></div>
+      <div class="clinical-note">
+        <strong>Clinician-led aid.</strong>
+        <span>No automated judgement, score, pass, or fail is produced.</span>
+      </div>
+    </section>
+
+    <section class="workspace" aria-live="polite">
+      <div class="scenario-summary">
+        <div>
+          <p class="eyebrow" id="scenarioCategory"></p>
+          <h2 id="scenarioTitle"></h2>
+          <p id="scenarioDescription"></p>
+        </div>
+        <select id="scenarioSelect" aria-label="Select scenario"></select>
+      </div>
+
+      <div class="workflow-strip" aria-label="Session workflow">
+        <span>1. Watch</span>
+        <span>2. Ask</span>
+        <span>3. Multiple choice</span>
+        <span>4. Summarise</span>
+      </div>
+
+      <div class="content-grid">
+        <section class="video-panel" aria-labelledby="video-heading">
+          <div class="panel-head">
+            <div>
+              <h3 id="video-heading">Present video</h3>
+              <p id="scenarioInstruction"></p>
+            </div>
+          </div>
+          <div class="video-frame">
+            <video id="scenarioVideo" controls preload="metadata" playsinline></video>
+          </div>
+          <div class="video-actions">
+            <button id="playButton" type="button">Play from start</button>
+            <button class="secondary-button" id="pauseButton" type="button">Pause</button>
+            <button class="secondary-button" id="replayButton" type="button">Replay</button>
+          </div>
+        </section>
+
+        <section class="assessment-panel" aria-labelledby="assessment-heading">
+          <div class="panel-head">
+            <div>
+              <h3 id="assessment-heading">Record observation</h3>
+              <p>Switch between clinical questions, multiple choice, and summary.</p>
+            </div>
+          </div>
+
+          <div class="tabs" role="tablist" aria-label="Assessment mode">
+            <button class="tab active" id="questionsTab" type="button">Questions</button>
+            <button class="tab" id="choicesTab" type="button">Multiple choice</button>
+            <button class="tab" id="summaryTab" type="button">Summary</button>
+          </div>
+
+          <div id="questionsView">
+            <div class="meta-grid">
+              <label>
+                <span>Patient reference</span>
+                <input id="patientRef" autocomplete="off" placeholder="Optional local reference" />
+              </label>
+              <label>
+                <span>Clinician</span>
+                <input id="clinicianName" autocomplete="off" placeholder="Optional" />
+              </label>
+            </div>
+            <div id="domainContainer" class="domain-stack"></div>
+            <label class="wide-label">
+              <span>Overall formulation / contextual notes</span>
+              <textarea id="overallNotes" rows="4" placeholder="Context, communication profile, prompts used, fatigue, vision/neglect considerations, MDT integration..."></textarea>
+            </label>
+          </div>
+
+          <div id="choicesView" hidden>
+            <div class="choice-toolbar">
+              <p>Present these patient-facing options and select any response the person indicates. Some choices are distractors; the app does not judge the response.</p>
+              <label class="label-toggle" for="showChoiceLabels">
+                <span>Show labels</span>
+                <input id="showChoiceLabels" type="checkbox" checked />
+              </label>
+            </div>
+            <div id="choiceContainer" class="patient-choice-grid"></div>
+            <label class="wide-label">
+              <span>Supported-choice notes</span>
+              <textarea id="choiceNotes" rows="4" placeholder="Pointing, verbal response, prompted choices, communication aids used..."></textarea>
+            </label>
+          </div>
+
+          <div id="summaryView" hidden>
+            <pre id="summaryText"></pre>
+            <div class="summary-actions">
+              <button id="copySummaryButton" type="button">Copy summary</button>
+              <button class="secondary-button" id="downloadSummaryButton" type="button">Download .txt</button>
+              <button class="secondary-button" id="downloadJsonButton" type="button">Download JSON</button>
+              <button class="danger-button" id="clearScenarioButton" type="button">Clear this scenario</button>
+            </div>
+          </div>
+        </section>
+      </div>
+    </section>
+  </main>
+  <script data-goatcounter="https://emergencyresponsevignettes.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+  <script src="app.js?v=20260501a" defer></script>
+</body>
+</html>

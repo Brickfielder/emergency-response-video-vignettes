@@ -1,0 +1,11 @@
+.vercel
+.codex
+.agents
+.git-real
+.playwright-cli
+output/playwright/
+kitchen-fire-safety-app-images.zip
+neurorehab_safety_vignette_app_chat_notes.md
+marco_research_agent_constraints/
+scripts/
+assets/generated-sheets/
