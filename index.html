@@ -8,7 +8,7 @@
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="icon" href="assets/icons/icon-192.png" />
   <link rel="apple-touch-icon" href="assets/icons/icon-192.png" />
-  <link rel="stylesheet" href="styles.css?v=20260501a" />
+  <link rel="stylesheet" href="styles.css?v=20260604a" />
   <title>Safety Vignettes</title>
 </head>
 <body class="intro-active">
@@ -140,10 +140,13 @@
           <div id="choicesView" hidden>
             <div class="choice-toolbar">
               <p>Present these patient-facing options and select any response the person indicates. Some choices are distractors; the app does not judge the response.</p>
-              <label class="label-toggle" for="showChoiceLabels">
-                <span>Show labels</span>
-                <input id="showChoiceLabels" type="checkbox" checked />
-              </label>
+              <div class="choice-tools">
+                <button class="secondary-button" id="choicePresenterButton" type="button">Present full screen</button>
+                <label class="label-toggle" for="showChoiceLabels">
+                  <span>Show labels</span>
+                  <input id="showChoiceLabels" type="checkbox" checked />
+                </label>
+              </div>
             </div>
             <div id="choiceContainer" class="patient-choice-grid"></div>
             <label class="wide-label">
@@ -165,7 +168,26 @@
       </div>
     </section>
   </main>
+
+  <div class="choice-presenter" id="choicePresenter" role="dialog" aria-modal="true" aria-labelledby="presenterChoiceLabel" hidden>
+    <div class="choice-presenter__topbar">
+      <p id="presenterChoiceCount"></p>
+      <button class="icon-button" id="closeChoicePresenterButton" type="button" aria-label="Close full-screen choices">&times;</button>
+    </div>
+    <div class="choice-presenter__stage">
+      <button class="presenter-arrow presenter-arrow--prev" id="previousChoiceButton" type="button" aria-label="Previous choice">&lsaquo;</button>
+      <figure class="presenter-card">
+        <img id="presenterChoiceImage" alt="" />
+        <figcaption id="presenterChoiceLabel"></figcaption>
+      </figure>
+      <button class="presenter-arrow presenter-arrow--next" id="nextChoiceButton" type="button" aria-label="Next choice">&rsaquo;</button>
+    </div>
+    <div class="choice-presenter__actions">
+      <button id="presenterSelectButton" type="button">Select response</button>
+    </div>
+  </div>
+
   <script data-goatcounter="https://emergencyresponsevignettes.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
-  <script src="app.js?v=20260501a" defer></script>
+  <script src="app.js?v=20260604a" defer></script>
 </body>
 </html>

@@ -170,6 +170,8 @@ let activeScenario = scenarios[0];
 let activeTab = "questions";
 let imageOnly = false;
 let deferredInstallPrompt = null;
+let presenterChoiceIndex = 0;
+let presenterTouchStartX = null;
 
 function storageKey(scenarioId) {
   return `neurorehabSafetyVignette:${scenarioId}`;
@@ -213,10 +215,12 @@ function initElements() {
     "scenarioList", "scenarioSelect", "scenarioCategory", "scenarioTitle", "scenarioDescription",
     "scenarioInstruction", "scenarioVideo", "playButton", "pauseButton", "replayButton",
     "questionsTab", "choicesTab", "summaryTab", "questionsView", "choicesView", "summaryView",
-    "domainContainer", "choiceContainer", "showChoiceLabels", "summaryText",
+    "domainContainer", "choiceContainer", "choicePresenterButton", "showChoiceLabels", "summaryText",
     "copySummaryButton", "downloadSummaryButton", "downloadJsonButton", "clearScenarioButton",
     "patientRef", "clinicianName", "overallNotes", "choiceNotes", "installButton",
-    "introPage", "appShell", "startAppButton"
+    "introPage", "appShell", "startAppButton", "choicePresenter", "closeChoicePresenterButton",
+    "previousChoiceButton", "nextChoiceButton", "presenterChoiceImage", "presenterChoiceLabel",
+    "presenterChoiceCount", "presenterSelectButton"
   ].forEach((id) => {
     els[id] = byId(id);
   });
@@ -332,6 +336,8 @@ function renderChoices() {
   activeScenario.choices.forEach((choice) => {
     els.choiceContainer.appendChild(buildChoiceCard(choice));
   });
+
+  if (!els.choicePresenter.hidden) renderPresenterChoice();
 }
 
 function toggleChoice(choiceId) {
@@ -343,6 +349,53 @@ function toggleChoice(choiceId) {
   setState(state);
   renderChoices();
   updateSummary();
+}
+
+function activePresenterChoice() {
+  return activeScenario.choices[presenterChoiceIndex] || activeScenario.choices[0];
+}
+
+function renderPresenterChoice() {
+  const choice = activePresenterChoice();
+  if (!choice) return;
+
+  const selected = (getState().selectedChoices || []).includes(choice.id);
+  els.choicePresenter.classList.toggle("patient-image-only", imageOnly);
+  els.presenterChoiceImage.src = choice.image;
+  els.presenterChoiceImage.alt = imageOnly ? choice.label : "";
+  els.presenterChoiceLabel.textContent = choice.label;
+  els.presenterChoiceCount.textContent = `${presenterChoiceIndex + 1} of ${activeScenario.choices.length}`;
+  els.presenterSelectButton.textContent = selected ? "Selected response" : "Select response";
+  els.presenterSelectButton.setAttribute("aria-pressed", selected ? "true" : "false");
+  els.previousChoiceButton.disabled = presenterChoiceIndex === 0;
+  els.nextChoiceButton.disabled = presenterChoiceIndex === activeScenario.choices.length - 1;
+}
+
+function openChoicePresenter(index = 0) {
+  presenterChoiceIndex = Math.min(Math.max(index, 0), activeScenario.choices.length - 1);
+  renderPresenterChoice();
+  els.choicePresenter.hidden = false;
+  document.body.classList.add("presenter-open");
+  els.presenterSelectButton.focus();
+}
+
+function closeChoicePresenter() {
+  els.choicePresenter.hidden = true;
+  document.body.classList.remove("presenter-open");
+  els.choicePresenterButton.focus();
+}
+
+function movePresenterChoice(direction) {
+  const nextIndex = presenterChoiceIndex + direction;
+  if (nextIndex < 0 || nextIndex >= activeScenario.choices.length) return;
+  presenterChoiceIndex = nextIndex;
+  renderPresenterChoice();
+}
+
+function togglePresenterChoice() {
+  const choice = activePresenterChoice();
+  if (!choice) return;
+  toggleChoice(choice.id);
 }
 
 function updateSummary() {
@@ -421,6 +474,7 @@ function switchTab(tab) {
 
 function setScenario(id) {
   activeScenario = scenarios.find((scenario) => scenario.id === id) || scenarios[0];
+  if (!els.choicePresenter.hidden) closeChoicePresenter();
   renderScenarioNav();
   renderScenarioHeader();
   renderFields();
@@ -460,6 +514,29 @@ function wireEvents() {
   els.questionsTab.addEventListener("click", () => switchTab("questions"));
   els.choicesTab.addEventListener("click", () => switchTab("choices"));
   els.summaryTab.addEventListener("click", () => switchTab("summary"));
+  els.choicePresenterButton.addEventListener("click", () => openChoicePresenter(0));
+  els.closeChoicePresenterButton.addEventListener("click", closeChoicePresenter);
+  els.previousChoiceButton.addEventListener("click", () => movePresenterChoice(-1));
+  els.nextChoiceButton.addEventListener("click", () => movePresenterChoice(1));
+  els.presenterSelectButton.addEventListener("click", togglePresenterChoice);
+  els.choicePresenter.addEventListener("touchstart", (event) => {
+    presenterTouchStartX = event.changedTouches[0]?.clientX ?? null;
+  }, { passive: true });
+  els.choicePresenter.addEventListener("touchend", (event) => {
+    if (presenterTouchStartX === null) return;
+    const endX = event.changedTouches[0]?.clientX ?? presenterTouchStartX;
+    const deltaX = endX - presenterTouchStartX;
+    presenterTouchStartX = null;
+    if (Math.abs(deltaX) < 55) return;
+    movePresenterChoice(deltaX < 0 ? 1 : -1);
+  }, { passive: true });
+
+  document.addEventListener("keydown", (event) => {
+    if (els.choicePresenter.hidden) return;
+    if (event.key === "Escape") closeChoicePresenter();
+    if (event.key === "ArrowLeft") movePresenterChoice(-1);
+    if (event.key === "ArrowRight") movePresenterChoice(1);
+  });
   els.showChoiceLabels.addEventListener("change", (event) => {
     imageOnly = !event.target.checked;
     renderChoices();

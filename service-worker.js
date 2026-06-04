@@ -1,10 +1,10 @@
-const CACHE_NAME = "neurorehab-safety-vignettes-v17";
+const CACHE_NAME = "neurorehab-safety-vignettes-v18";
 
 const ASSETS = [
   "./",
   "./index.html",
-  "./styles.css?v=20260501a",
-  "./app.js?v=20260501a",
+  "./styles.css?v=20260604a",
+  "./app.js?v=20260604a",
   "./manifest.webmanifest",
   "./assets/icons/icon-192.png",
   "./assets/icons/icon-512.png",
